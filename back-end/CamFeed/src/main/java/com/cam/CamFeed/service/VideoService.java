@@ -1,8 +1,10 @@
 package com.cam.CamFeed.service;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.LocalDateTime;   // ✅ REQUIRED
+import java.time.LocalDateTime;  
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -41,5 +43,16 @@ public class VideoService {
 
     public Video getVideo(String id) {
         return videorepository.findById(id).orElseThrow();
+    }
+    public void deleteVideo(String id){
+        Video video = videorepository.findById(id)
+        .orElseThrow(() -> new NoSuchElementException("Video Not Found"));
+
+        // delete file from storage
+        File file = new File(video.getFilePath());
+        if (file.exists()) {
+            file.delete();
+        }
+        videorepository.deleteById(id);
     }
 }
